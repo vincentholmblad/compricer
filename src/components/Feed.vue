@@ -10,8 +10,11 @@
         />
         Loading videos...
       </div>
-      <div v-else>
+      <div v-else-if="videoFeed.length">
         <feed-item :video="video" :index="index" v-for="(video, index) in videoFeed" v-bind:key="video.id" />
+      </div>
+      <div v-else-if="search.length || minLikes > 0" class="p-16">
+        <h1 class="text-2xl">No videos on this page matches your search</h1>
       </div>
     </div>
     <div class="md:flex justify-between items-center mb-24 px-4 md:px-0">
@@ -28,14 +31,13 @@ import FeedItem from './FeedItem.vue';
 var Vimeo = require('vimeo').Vimeo;
 var client = new Vimeo('a4d6302199db898da47931d16aea8d74c8148df1', 'rAsYK7Eu/m3LU972s2vk55SSc9DAgsC4FrL4wh8tOme2fNjIUdcypbCq1JTBrzjGlHT8Fv+pD2ynXCDQHaogp77wclK99k5SnOQPUdFTB+gcVZVfCeRQvjh/1S7kKwwa', 'd9abb30a1eb5d44094e61ef2d6f53228');
 export default {
-  props: ['minLikes', 'videosPerPage'],
+  props: ['minLikes', 'videosPerPage', 'search'],
   data: () => ({
     videos: [],
     totalVideos: 0,
     page: 1,
     error: null,
-    loading: false,
-    searchText: ''
+    loading: false
   }),
   components: {
     FeedItem,
@@ -46,9 +48,9 @@ export default {
   },
   computed: {
     videoFeed() {
-      return this.minLikes ? this.videos.filter((video) => {
-        return video.user.metadata.connections.likes.total >= this.minLikes;
-      }) : this.videos;
+      return this.videos.filter((video) => {
+        return video.user.metadata.connections.likes.total >= this.minLikes && video.description.toLowerCase().indexOf(this.search.toLowerCase()) != -1;
+      });
     },
     totalPages() {
       return Math.ceil(this.totalVideos / this.videosPerPage);
@@ -57,17 +59,12 @@ export default {
   watch: {
     videosPerPage() {
       this.changeVideosPerPage(this.videosPerPage);
+    },
+    search() {
+      console.log(this.search);
     }
   },
   methods: {
-    search() {
-      this.page = 1;
-      this.error = null;
-      this.loading = false;
-      this.totalPages = 0;
-      this.videos = [];
-      this.getVideos(this.searchText, this.minLikes);
-    },
     nextPage() {
       if(this.page + 1 <= this.totalPages) {
         this.page++;
@@ -95,7 +92,7 @@ export default {
         query: {
           page: this.page,
           per_page: this.videosPerPage,
-          fields: 'id,name,description,metadata,user,pictures,release_time,link,stats',
+          fields: 'id,name,description,metadata,user,pictures,created_time,link,stats',
           sizes: '640x480,100x100'
         }
       }, (error, body, status_code, headers) => {
@@ -105,12 +102,10 @@ export default {
           this.loading = false;
         } else {
           this.loading = false;
-          console.log(body);
           this.totalVideos = body.total;
           this.videos = this.videos = body.data;
         }
       });
-
     }
   }
 }

@@ -39,6 +39,10 @@
             </div>25
           </div>
         </div>
+        <div class="relative">
+            <input type="search" v-model="search" class="p-6 pl-12 w-full border-b border-grey-light text-grey-dark text-sm focus:outline-none" placeholder="Search in description" />
+            <font-awesome-icon icon="search" class="absolute search-icon text-grey-light pointer-events-none" />
+        </div>
       </div>
     </div>
   </div>
@@ -48,7 +52,8 @@
 export default {
   data: () => ({
     minLikes: 0,
-    videosPerPage: 10
+    videosPerPage: 10,
+    search: ''
   }),
   watch: {
     minLikes() {
@@ -56,13 +61,17 @@ export default {
     },
     videosPerPage() {
       this.emit();
+    },
+    search() {
+      this.emit();
     }
   },
   methods: {
     emit() {
       this.$emit("input", {
         minLikes: this.minLikes,
-        videosPerPage: this.videosPerPage
+        videosPerPage: this.videosPerPage,
+        search: this.search
       });
     }
   }
@@ -70,4 +79,11 @@ export default {
 </script>
 
 <style>
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    margin-top: -2px;
+}
 </style>

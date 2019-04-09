@@ -16,6 +16,9 @@
       <div v-else-if="search.length || minLikes > 0" class="p-16">
         <h1 class="text-2xl">No videos on this page matches your search</h1>
       </div>
+      <div v-else-if="error">
+        <h1 class="text-2xl">An error occured. Try again?</h1>
+      </div>
     </div>
     <div class="md:flex justify-between items-center mb-24 px-4 md:px-0">
       <button @click="prevPage()" class="rounded bg-white shadow px-6 py-4 w-full md:w-1/3 disabled focus:outline-none" :class="{ 'hover:shadow-lg': page != 1, 'pointer-events-none': page == 1 }" :disabled="page == 1">Previous page</button>
@@ -59,9 +62,6 @@ export default {
   watch: {
     videosPerPage() {
       this.changeVideosPerPage(this.videosPerPage);
-    },
-    search() {
-      console.log(this.search);
     }
   },
   methods: {
@@ -97,9 +97,8 @@ export default {
         }
       }, (error, body, status_code, headers) => {
         if (error) {
-          console.log('error');
-          console.log(error);
           this.loading = false;
+          this.error = true;
         } else {
           this.loading = false;
           this.totalVideos = body.total;

@@ -1,18 +1,28 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+<div class="border-t border-grey-light">
+  <div class="max-w-xl mx-auto md:flex justify-center">
+      <filters class="w-full md:w-1/4" v-model="filters" />
+      <feed class="w-full md:w-3/4" :videos-per-page="filters.videosPerPage" :min-likes="filters.minLikes" />
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Feed from '@/components/Feed.vue'
+import Filters from '@/components/Filters.vue';
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
-  }
+    Feed,
+    Filters
+  },
+  data: () => ({
+    filters: {
+      minLikes: 0,
+      videosPerPage: 10
+    }
+  })
 }
 </script>

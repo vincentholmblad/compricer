@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="py-12">
+      <h1 class="text-3xl font-bolder">Twimeo</h1>
+      <p>Compricer Programming Test</p>
     </div>
     <router-view/>
   </div>
@@ -25,5 +25,8 @@
       color: #42b983;
     }
   }
+}
+body {
+  @apply bg-blue-lightest;
 }
 </style>

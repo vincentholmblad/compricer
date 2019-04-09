@@ -52,7 +52,7 @@ export default {
   computed: {
     videoFeed() {
       return this.videos.filter((video) => {
-        return video.user.metadata.connections.likes.total >= this.minLikes && video.description.toLowerCase().indexOf(this.search.toLowerCase()) != -1;
+        return video.user.metadata.connections.likes.total >= this.minLikes && this.search ? video.description.toLowerCase().indexOf(this.search.toLowerCase()) != -1 : true;
       });
     },
     totalPages() {
